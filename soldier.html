@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訓練時間表</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input {
+            width: 80px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            loadData();
+            calculateTotal();
+        });
+
+        function calculateTotal() {
+            const pointValues = [20, 30, 60, 80, 100, 120];
+            const timeUnits = [86400, 3600, 60];
+            let buffMultiplier = 1 + ((parseFloat(document.getElementById("buff1").value) || 0) / 100);
+
+            document.querySelectorAll("table tr").forEach((row, rowIndex) => {
+                let cells = row.querySelectorAll("td");
+                if (cells.length > 0 && rowIndex > 0) {
+                    let totalSeconds = Array.from(cells).slice(1, -1).reduce((sum, cell, i) => {
+                        let value = parseInt(cell.querySelector("input").value) || 0;
+                        return sum + value * pointValues[i];
+                    }, 0) / buffMultiplier;
+                    
+                    let time = timeUnits.map(unit => {
+                        let val = Math.floor(totalSeconds / unit);
+                        totalSeconds %= unit;
+                        return val;
+                    });
+                    cells[cells.length - 1].innerText = `${time[0]} 日 ${time[1]} 時間 ${time[2]} 分`;
+                }
+            });
+        }
+
+        function saveData() {
+            let data = {
+                buff: document.getElementById("buff1").value,
+                rows: Array.from(document.querySelectorAll("table tr")).slice(1).map(row => 
+                    Array.from(row.querySelectorAll("input")).map(input => input.value)
+                )
+            };
+            localStorage.setItem("trainingData", JSON.stringify(data));
+            alert("データが保存されました。");
+        }
+
+        function loadData() {
+            let savedData = localStorage.getItem("trainingData");
+            if (savedData) {
+                let data = JSON.parse(savedData);
+                document.getElementById("buff1").value = data.buff;
+                document.querySelectorAll("table tr").forEach((row, rowIndex) => {
+                    if (rowIndex > 0) {
+                        let inputs = row.querySelectorAll("input");
+                        data.rows[rowIndex - 1]?.forEach((value, index) => inputs[index].value = value);
+                    }
+                });
+                calculateTotal();
+            }
+        }
+
+        function clearData() {
+            document.getElementById("buff1").value = 0;
+            document.querySelectorAll("input").forEach(input => input.value = 0);
+            calculateTotal();
+        }
+    </script>
+</head>
+<body>
+    <h2>訓練時間</h2>
+    <label>訓練バフ: <input type="number" id="buff1" value="0" step="0.1" min="0" oninput="calculateTotal()">%</label>
+    <table>
+        <tr>
+            <th></th><th>T1</th><th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th><th>合計時間</th>
+        </tr>
+        <tr><td>歩兵</td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td>0 日 0 時間 0 分</td></tr>
+        <tr><td>騎兵</td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td>0 日 0 時間 0 分</td></tr>
+        <tr><td>射撃兵</td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td>0 日 0 時間 0 分</td></tr>
+        <tr><td>車両</td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td><input type="number" min="0" oninput="calculateTotal()"></td><td>0 日 0 時間 0 分</td></tr>
+    </table>
+    <button onclick="saveData()">保存</button>
+    <button onclick="clearData()">クリア</button>
+</body>
+</html>
+
+
