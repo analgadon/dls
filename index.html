@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>トップ司令官を走る人のためのツール</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input {
+            width: 80px;
+            text-align: center;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        const categories = ["汎用", "建築", "研究", "訓練", "回復", "開発"];
+        
+        function createTable() {
+            const table = document.getElementById("data-table");
+            categories.forEach(category => {
+                let row = document.createElement("tr");
+                let categoryCell = document.createElement("td");
+                categoryCell.textContent = category;
+                row.appendChild(categoryCell);
+                
+                for (let i = 0; i < 10; i++) {
+                    let cell = document.createElement("td");
+                    let input = document.createElement("input");
+                    input.type = "number";
+                    input.min = "0";
+                    input.value = "0";
+                    input.addEventListener("input", calculateTotals);
+                    cell.appendChild(input);
+                    row.appendChild(cell);
+                }
+                
+                let totalCell = document.createElement("td");
+                row.appendChild(totalCell);
+                
+                let pointsACell = document.createElement("td");
+                row.appendChild(pointsACell);
+                
+                let pointsBCell = document.createElement("td");
+                row.appendChild(pointsBCell);
+                
+                table.appendChild(row);
+            });
+        }
+        
+        function formatPoints(points) {
+            points = Math.round(points);
+            if (points >= 100000000) {
+                return Math.round(points / 100000000) + " 億";
+            } else if (points >= 10000) {
+                return Math.round(points / 10000) + " 万";
+            } else {
+                return points.toString();
+            }
+        }
+        
+        function calculateTotals() {
+            const weights = [1, 5, 15, 30, 60, 240, 480, 720, 900, 1440];
+            const rows = document.querySelectorAll("table tr");
+            
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].querySelectorAll("td");
+                let totalMinutes = 0;
+                
+                for (let j = 1; j <= weights.length; j++) {
+                    let input = cells[j].querySelector("input");
+                    let inputValue = input.value;
+                    totalMinutes += (parseInt(inputValue, 10) || 0) * weights[j - 1];
+                }
+                
+                const totalDays = Math.round((totalMinutes / 1440) * 100) / 100;
+                cells[cells.length - 3].textContent = totalDays.toFixed(2);
+                
+                const pointsA = Math.round(totalMinutes * 250);
+                cells[cells.length - 2].textContent = formatPoints(pointsA);
+                
+                const pointsB = Math.round(totalMinutes * 200);
+                cells[cells.length - 1].textContent = formatPoints(pointsB);
+            }
+        }
+        
+        function saveData() {
+            const inputs = document.querySelectorAll("table input");
+            let data = {};
+            
+            inputs.forEach((input, index) => {
+                let row = Math.floor(index / 10) + 1;
+                let col = (index % 10) + 1;
+                data[`${row}-${col}`] = input.value;
+            });
+            
+            localStorage.setItem("timeData", JSON.stringify(data));
+            alert("データを保存しました！");
+        }
+        
+        function clearData() {
+            const inputs = document.querySelectorAll("table input");
+            inputs.forEach(input => input.value = "0");
+            calculateTotals();
+        }
+        
+        window.onload = function() {
+            createTable();
+            const inputs = document.querySelectorAll("table input");
+            let storedData = JSON.parse(localStorage.getItem("timeData")) || {};
+            
+            inputs.forEach((input, index) => {
+                let row = Math.floor(index / 10) + 1;
+                let col = (index % 10) + 1;
+                input.value = storedData[`${row}-${col}`] || 0;
+                input.addEventListener("input", calculateTotals);
+            });
+            calculateTotals();
+        };
+    </script>
+</head>
+<body>
+    <h2>トップ司令官を走る人のためのツール</h2>
+    <table id="data-table">
+        <tr>
+            <th>カテゴリ</th>
+            <th>1分</th>
+            <th>5分</th>
+            <th>15分</th>
+            <th>30分</th>
+            <th>60分</th>
+            <th>4h</th>
+            <th>8h</th>
+            <th>12h</th>
+            <th>15h</th>
+            <th>24h</th>
+            <th>合計時間（日）</th>
+            <th>ポイントA</th>
+            <th>ポイントB</th>
+        </tr>
+    </table>
+    <button onclick="saveData()">保存</button>
+    <button onclick="clearData()">クリア</button>
+</body>
+</html>
