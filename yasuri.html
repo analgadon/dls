@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>順位・ヤスリ消費量・報酬計算</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 450px;
+            margin: auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ccc;
+            padding: 3px;
+            border-radius: 4px;
+        }
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .highlight-cell {
+            background-color: #fff9c4 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>順位・報酬計算</h2>
+        <table id="resultTable">
+            <thead>
+                <tr>
+                    <th>順位</th>
+                    <th>報酬</th>
+                    <th>消費量</th>
+                    <th>割合(%)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        function getReward(rank) {
+            if (rank === 1) return 250;
+            if (rank === 2) return 180;
+            if (rank === 3) return 130;
+            if (rank >= 4 && rank <= 5) return 85;
+            if (rank >= 6 && rank <= 10) return 60;
+            if (rank >= 11 && rank <= 15) return 45;
+            if (rank >= 16 && rank <= 25) return 30;
+            if (rank >= 26 && rank <= 50) return 15;
+            return 0;
+        }
+
+        function generateTable() {
+            let tableBody = document.getElementById('resultTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = "";
+            
+            for (let rank = 1; rank <= 50; rank++) { // 50位まで表示
+                let reward = getReward(rank);
+                let row = tableBody.insertRow();
+                row.insertCell(0).innerText = rank;
+                row.insertCell(1).innerText = reward;
+                let scoreInput = document.createElement("input");
+                scoreInput.type = "number";
+                scoreInput.min = "0"; // 負の値を禁止
+                scoreInput.oninput = function() { updateRate(row, reward); };
+                row.insertCell(2).appendChild(scoreInput);
+                row.insertCell(3).innerText = "-";
+            }
+        }
+
+        function updateRate(row, reward) {
+            let score = row.cells[2].getElementsByTagName("input")[0].value;
+            let rateCell = row.cells[3];
+            rateCell.classList.remove('highlight-cell'); // 初期状態では色を付けない
+            if (score > 0) {
+                let rate = (reward / score * 100).toFixed(2);
+                rateCell.innerText = `${rate}%`;
+            } else {
+                rateCell.innerText = "-";
+            }
+            highlightTopRates();
+        }
+
+        function highlightTopRates() {
+            let tableBody = document.getElementById('resultTable').getElementsByTagName('tbody')[0];
+            let rows = Array.from(tableBody.rows);
+            rows.forEach(row => row.cells[3].classList.remove('highlight-cell'));
+            rows = rows.filter(row => !isNaN(parseFloat(row.cells[3].innerText)) && row.cells[3].innerText !== "-");
+            rows.sort((a, b) => parseFloat(b.cells[3].innerText) - parseFloat(a.cells[3].innerText));
+            rows.slice(0, 5).forEach(row => row.cells[3].classList.add('highlight-cell'));
+        }
+
+        generateTable();
+    </script>
+</body>
+</html>
