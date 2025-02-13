@@ -16,6 +16,13 @@
 	</header>
     <div class="center">
         <h2>ヤスリランキング</h2>
+	<div class="memo">
+		<ul>
+			<li>ランキングを眺めて分析するためのツールです。</li>
+			<li>割合(%)が高いほど、効率よくウェポンのコアを入手できています。</li>
+			<li>入手効率が良い上位5番目まで黄色く色が塗られます。</li>
+		</ul>
+	</div>
         <table id="resultTable">
             <thead>
                 <tr>
@@ -28,7 +35,6 @@
             <tbody></tbody>
         </table>
     </div>
-
     <script>
         function getReward(rank) {
             if (rank === 1) return 250;
