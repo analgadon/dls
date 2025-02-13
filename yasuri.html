@@ -4,54 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ヤスリランキング</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-            background-color: #f4f4f9;
-        }
-        .container {
-            max-width: 450px;
-            margin: auto;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 6px;
-            text-align: center;
-        }
-        th {
-            background-color: #FFF;
-			background: #f2f2f2;
-        }
-        input {
-            width: 60px;
-            text-align: center;
-            border: 1px solid #ccc;
-            padding: 3px;
-            border-radius: 4px;
-        }
-        input:focus {
-            border-color: #007bff;
-            outline: none;
-        }
-        .highlight-cell {
-            background-color: #fff9c4 !important;
-        }
-    </style>
+	<link href="style.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
+	<header>
+		<ul>
+			<li><a href="/dls/">トップ司令官</a></li>
+			<li><a href="/dls/soldier.html">訓練時間</a></li>
+			<li><a href="/dls/yasuri.html">石碑最適化</a></li>
+		</ul>
+	</header>
+    <div class="center">
         <h2>ヤスリランキング</h2>
         <table id="resultTable">
             <thead>
@@ -121,10 +84,5 @@
 
         generateTable();
     </script>
-	<ul>
-		<li><a href="/dls/">トップ司令官を走る人のためのツール</a></li>
-		<li><a href="/dls/soldier.html">訓練時間を計算するツール</a></li>
-		<li><a href="/dls/yasuri.html">ヤスリランキングの報酬を最適化</a></li>
-	</ul>
 </body>
 </html>
