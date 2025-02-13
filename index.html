@@ -15,11 +15,8 @@
             flex-direction: column;
             align-items: center;
         }
-        h2 {
-            color: #4CAF50;
-        }
         table {
-            width: 90%; /* 全体をコンパクトにするために幅を90%に設定 */
+            width: 90%;
             border-collapse: collapse;
             margin: 20px 0;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -28,20 +25,17 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: center;
-           -color: #fff; /* セルの背景を白に設定 */
+			background: #FFF;
+			font-size: 14px;
         }
         th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        tr:nth-child(even) {
             background-color: #f2f2f2;
         }
         tr:hover {
             background-color: #ddd;
         }
         input {
-            width: 60px; /* 入力フィールドをコンパクトに */
+            width: 60px;
             text-align: center;
             padding: 5px;
             border: 1px solid #ccc;
@@ -188,7 +182,9 @@
             <th>ポイントB</th>
         </tr>
     </table>
+	<div class="center">
     <button onclick="saveData()">保存</button>
     <button onclick="clearData()">クリア</button>
+	</div>
 </body>
 </html>
