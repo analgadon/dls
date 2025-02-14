@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回復ポチポチ</title>
+	<link href="style.css" rel="stylesheet">
+    <script>
+        function calculateValues() {
+            let recoveryBuff = parseFloat(document.getElementById("recoveryBuff").value) / 100;
+            let helpCount = parseInt(document.getElementById("helpCount").value);
+            
+            let capacityRow = document.getElementById("capacityRow");
+            
+            let capacities = [
+                "-", // T1
+                240 * (1 + recoveryBuff) * helpCount, // T2
+                120 * (1 + recoveryBuff) * helpCount, // T3
+                80 * (1 + recoveryBuff) * helpCount, // T4
+                60 * (1 + recoveryBuff) * helpCount, // T5
+                48 * (1 + recoveryBuff) * helpCount  // T6
+            ];
+            
+            for (let i = 0; i < capacities.length; i++) {
+                capacityRow.cells[i + 1].innerText = capacities[i] !== "-" ? Math.floor(capacities[i]) : "-";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("recoveryBuff").addEventListener("input", calculateValues);
+            document.getElementById("helpCount").addEventListener("input", calculateValues);
+            calculateValues(); // 初期計算
+        });
+    </script>
+</head>
+<body>
+	<header>
+		<ul>
+			<li><a href="/dls/">トップ司令官</a></li>
+			<li><a href="/dls/soldier.html">訓練時間</a></li>
+			<li><a href="/dls/yasuri.html">石碑最適化</a></li>
+			<li><a href="/dls/help.html">回復ポチポチ</a></li>
+		</ul>
+	</header>
+    <h2>ヘルプbotで回復できる人数を計算</h2>
+    <div class="inputArea">
+		<div>
+			<label for="recoveryBuff">回復バフ: </label>
+			<input type="number" id="recoveryBuff" value="0" step="0.01" min="0">%
+		</div>
+		<div>
+			<label for="helpCount">ヘルプ数: </label>
+			<input type="number" id="helpCount" value="0" min="0" max="30">
+		</div>
+    </div>
+    <table class="heal-bot">
+        <tr>
+            <th></th><th>T1</th><th>T2</th><th>T3</th><th>T4</th><th>T5</th><th>T6</th>
+        </tr>
+        <tr id="capacityRow">
+            <td>回復可能人数</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+        </tr>
+    </table>
+</body>
+</html>
