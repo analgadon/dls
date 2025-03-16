@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>資源データ表</title>
+	<link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <h2>資源データ表</h2>
+    <table id="resourceTable">
+        <tr>
+            <th>カテゴリ</th>
+            <th>1000</th>
+            <th>10000</th>
+            <th>50000</th>
+            <th>150000</th>
+            <th>500000</th>
+            <th>1500000</th>
+            <th>5000000</th>
+            <th>合計</th>
+        </tr>
+        <tr>
+            <th>トマト</th>
+            <td><input type="number" value="0" data-unit="1000"></td>
+            <td><input type="number" value="0" data-unit="10000"></td>
+            <td><input type="number" value="0" data-unit="50000"></td>
+            <td><input type="number" value="0" data-unit="150000"></td>
+            <td><input type="number" value="0" data-unit="500000"></td>
+            <td><input type="number" value="0" data-unit="1500000"></td>
+            <td><input type="number" value="0" data-unit="5000000"></td>
+            <td class="total" id="tomatoTotal">0</td>
+        </tr>
+        <tr>
+            <th>木材</th>
+            <td><input type="number" value="0" data-unit="1000"></td>
+            <td><input type="number" value="0" data-unit="10000"></td>
+            <td><input type="number" value="0" data-unit="50000"></td>
+            <td><input type="number" value="0" data-unit="150000"></td>
+            <td><input type="number" value="0" data-unit="500000"></td>
+            <td><input type="number" value="0" data-unit="1500000"></td>
+            <td><input type="number" value="0" data-unit="5000000"></td>
+            <td class="total" id="woodTotal">0</td>
+        </tr>
+        <tr>
+            <th>鋼</th>
+            <td><input type="number" value="0" data-unit="1000"></td>
+            <td><input type="number" value="0" data-unit="10000"></td>
+            <td><input type="number" value="0" data-unit="50000"></td>
+            <td><input type="number" value="0" data-unit="150000"></td>
+            <td><input type="number" value="0" data-unit="500000"></td>
+            <td><input type="number" value="0" data-unit="1500000"></td>
+            <td><input type="number" value="0" data-unit="5000000"></td>
+            <td class="total" id="steelTotal">0</td>
+        </tr>
+        <tr>
+            <th>石油</th>
+            <td><input type="number" value="0" data-unit="1000"></td>
+            <td><input type="number" value="0" data-unit="10000"></td>
+            <td><input type="number" value="0" data-unit="50000"></td>
+            <td><input type="number" value="0" data-unit="150000"></td>
+            <td><input type="number" value="0" data-unit="500000"></td>
+            <td><input type="number" value="0" data-unit="1500000"></td>
+            <td><input type="number" value="0" data-unit="5000000"></td>
+            <td class="total" id="oilTotal">0</td>
+        </tr>
+    </table>
+
+    <h2>資源ランク表</h2>
+    <table id="rankTable">
+        <tr>
+            <th>カテゴリ</th>
+            <th>個数</th>
+            <th>トマト</th>
+            <th>木材</th>
+            <th>鋼</th>
+            <th>石油</th>
+        </tr>
+        <tr>
+            <th>初級</th>
+            <td><input type="number" value="0" data-unit="10000"></td>
+            <td class="rankTotal" id="tomatoBeginner">0</td>
+            <td class="rankTotal" id="woodBeginner">0</td>
+            <td class="rankTotal" id="steelBeginner">0</td>
+            <td class="rankTotal" id="oilBeginner">0</td>
+        </tr>
+        <tr>
+            <th>中級</th>
+            <td><input type="number" value="0" data-unit="50000"></td>
+            <td class="rankTotal" id="tomatoIntermediate">0</td>
+            <td class="rankTotal" id="woodIntermediate">0</td>
+            <td class="rankTotal" id="steelIntermediate">0</td>
+            <td class="rankTotal" id="oilIntermediate">0</td>
+        </tr>
+        <tr>
+            <th>上級</th>
+            <td><input type="number" value="0" data-unit="150000"></td>
+            <td class="rankTotal" id="tomatoAdvanced">0</td>
+            <td class="rankTotal" id="woodAdvanced">0</td>
+            <td class="rankTotal" id="steelAdvanced">0</td>
+            <td class="rankTotal" id="oilAdvanced">0</td>
+        </tr>
+        <tr>
+            <th>メガ資源</th>
+            <td><input type="number" value="0" data-unit="1500000"></td>
+            <td class="rankTotal" id="tomatoMega">0</td>
+            <td class="rankTotal" id="woodMega">0</td>
+            <td class="rankTotal" id="steelMega">0</td>
+            <td class="rankTotal" id="oilMega">0</td>
+        </tr>
+    </table>
+
+    <div class="buttons">
+        <button id="saveButton">保存</button>
+        <button id="clearButton">クリア</button>
+    </div>
+
+    <script>
+        // 合計値をフォーマットする関数（100万＝1M）
+        function formatNumber(value) {
+            if (value >= 1000000) {
+                return (value / 1000000).toFixed(2) + "M"; // 100万以上ならM単位、小数点以下2桁
+            }
+            return Math.floor(value).toLocaleString(); // 100万未満はそのまま
+        }
+
+        // 資源データ表の合計を計算する関数
+        function calculateDataTotal(row) {
+            const inputs = row.querySelectorAll('input[type="number"]');
+            const category = row.querySelector('th').textContent; // カテゴリ名を取得
+            let total = 0;
+
+            inputs.forEach(input => {
+                const value = parseInt(input.value) || 0;
+                const unit = parseInt(input.getAttribute('data-unit'));
+                total += value * unit;
+            });
+
+            if (category === '鋼') {
+                total = total / 2;
+            } else if (category === '石油') {
+                total = total / 5;
+            }
+
+            const totalCell = row.querySelector('.total');
+            totalCell.textContent = formatNumber(total);
+        }
+
+        // 資源ランク表の合計を計算する関数
+        function calculateRankTotal(row) {
+            const input = row.querySelector('input[type="number"]');
+            const category = row.querySelector('th').textContent;
+            const value = parseInt(input.value) || 0;
+            const unit = parseInt(input.getAttribute('data-unit'));
+            let baseTotal = value * unit;
+
+            const totals = row.querySelectorAll('.rankTotal');
+            totals.forEach(totalCell => {
+                const resource = totalCell.id.split(/(?=[A-Z])/)[0]; // IDから資源名を取得
+                let adjustedTotal = baseTotal;
+
+                if (resource === 'steel') {
+                    adjustedTotal = baseTotal / 2; // 鋼は2で割る
+                } else if (resource === 'oil') {
+                    adjustedTotal = baseTotal / 5; // 石油は5で割る
+                }
+
+                totalCell.textContent = formatNumber(adjustedTotal);
+            });
+        }
+
+        // データの保存
+        function saveData() {
+            const allInputs = document.querySelectorAll('input[type="number"]');
+            const data = {};
+            allInputs.forEach(input => {
+                data[input.dataset.unit + input.closest('tr').querySelector('th').textContent] = input.value;
+            });
+            localStorage.setItem('resourceData', JSON.stringify(data));
+            alert('データが保存されました');
+        }
+
+        // データのクリア
+        function clearData() {
+            const allInputs = document.querySelectorAll('input[type="number"]');
+            allInputs.forEach(input => {
+                input.value = 0;
+            });
+            const dataRows = document.querySelectorAll('#resourceTable tr:not(:first-child)');
+            dataRows.forEach(row => calculateDataTotal(row));
+            const rankRows = document.querySelectorAll('#rankTable tr:not(:first-child)');
+            rankRows.forEach(row => calculateRankTotal(row));
+        }
+
+        // 保存したデータの読み込み
+        function loadData() {
+            const savedData = localStorage.getItem('resourceData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                const allInputs = document.querySelectorAll('input[type="number"]');
+                allInputs.forEach(input => {
+                    const key = input.dataset.unit + input.closest('tr').querySelector('th').textContent;
+
+                    if (data[key] !== undefined) {
+                        input.value = data[key];
+                    }
+                });
+                const dataRows = document.querySelectorAll('#resourceTable tr:not(:first-child)');
+                dataRows.forEach(row => calculateDataTotal(row));
+                const rankRows = document.querySelectorAll('#rankTable tr:not(:first-child)');
+                rankRows.forEach(row => calculateRankTotal(row));
+            }
+        }
+
+        // 資源データ表の初期計算
+        const dataRows = document.querySelectorAll('#resourceTable tr:not(:first-child)');
+        dataRows.forEach(row => calculateDataTotal(row));
+
+        // 資源データ表の入力変更時の更新
+        const dataInputs = document.querySelectorAll('#resourceTable input[type="number"]');
+        dataInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                const row = input.closest('tr');
+                calculateDataTotal(row);
+            });
+        });
+
+        // 資源ランク表の初期計算
+        const rankRows = document.querySelectorAll('#rankTable tr:not(:first-child)');
+        rankRows.forEach(row => calculateRankTotal(row));
+
+        // 資源ランク表の入力変更時の更新
+        const rankInputs = document.querySelectorAll('#rankTable input[type="number"]');
+        rankInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                const row = input.closest('tr');
+                calculateRankTotal(row);
+            });
+        });
+
+        // ボタンのイベントリスナー
+        document.getElementById('saveButton').addEventListener('click', saveData);
+        document.getElementById('clearButton').addEventListener('click', clearData);
+
+        // ページ読み込み時に保存データを反映
+        window.addEventListener('load', loadData);
+    </script>
+</body>
+</html>
