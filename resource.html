@@ -13,10 +13,10 @@
 			<li><a href="/dls/soldier.html">訓練時間</a></li>
 			<li><a href="/dls/yasuri.html">石碑最適化</a></li>
 			<li><a href="/dls/help.html">回復ポチポチ</a></li>
-			<li><a href="/dls/resource.html">回復ポチポチ</a></li>
+			<li><a href="/dls/resource.html">資源</a></li>
 		</ul>
 	</header>
-    <h2>資源データ表</h2>
+    <h2>解凍資源</h2>
     <table id="resourceTable">
         <tr>
             <th>カテゴリ</th>
@@ -75,7 +75,7 @@
         </tr>
     </table>
 
-    <h2>資源ランク表</h2>
+    <h2>セレクト資源</h2>
     <table id="rankTable">
         <tr>
             <th>カテゴリ</th>
@@ -123,7 +123,12 @@
         <button id="saveButton">保存</button>
         <button id="clearButton">クリア</button>
     </div>
-
+	<div class="memo">
+		<ul>
+			<li>資源の残量を把握する用のツールです。</li>
+			<li>解凍資源の数量は鋼は÷2、石油は÷5が合計に表示されるようになっていますので、アイテムの色を見てそのまま入力すれば正しい値になります。</li>
+		</ul>
+	</div>
     <script>
         // 合計値をフォーマットする関数（100万＝1M）
         function formatNumber(value) {
