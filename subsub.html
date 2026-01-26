@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>裏ボス向け 多重起動・マクロ解説</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background: #f7f7f7;
+      color: #333;
+      line-height: 1.8;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px;
+      background: #fff;
+    }
+
+    h1, h2, h3 {
+      margin-top: 2em;
+      line-height: 1.4;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      border-left: 5px solid #666;
+      padding-left: 10px;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+    }
+
+    p {
+      margin: 1em 0;
+    }
+
+    ol {
+      padding-left: 1.5em;
+    }
+
+    li {
+      margin-bottom: 1em;
+    }
+
+    a {
+      color: #0066cc;
+      word-break: break-all;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 12px 0;
+      border-radius: 4px;
+    }
+
+    .note {
+      background: #f0f4ff;
+      padding: 12px;
+      border-left: 4px solid #4a6cf7;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <p>
+      裏ボスから<br>
+      「やり方教えて！！」とよく聞かれるので私のサブ垢の管理や、マクロなどについて少し書こうと思います。
+    </p>
+
+    <h2>使っているツール</h2>
+
+    <ol>
+      <li>
+        <strong>Sandboxie-Plus</strong><br>
+        <a href="https://sandboxie-plus.com/" target="_blank">https://sandboxie-plus.com/</a>
+        <p>
+          サブ垢を多重窓で起動するためのツールです。<br>
+          初回起動時にログイン情報を保存できるので、毎回入力せずにスムーズにログインできます。
+        </p>
+      </li>
+
+      <li>
+        <strong>Window Resizer</strong><br>
+        <a href="https://vovsoft.com/download/window-resizer/" target="_blank">
+          https://vovsoft.com/download/window-resizer/
+        </a>
+        <p>
+          多重起動したソフトのサイズを無理やり小さくして画面に配置するためのソフトです。
+        </p>
+      </li>
+
+      <li>
+        <strong>AutoHotkey</strong><br>
+        <a href="https://www.autohotkey.com/" target="_blank">
+          https://www.autohotkey.com/
+        </a>
+        <p>
+          自動周回や連打など、マウス操作を制御できるツールです。<br>
+          多重操作やヘルプbot用マクロに使います。
+        </p>
+      </li>
+
+      <li>
+        <strong>TinyTask</strong><br>
+        <a href="https://tinytask.net/" target="_blank">
+          https://tinytask.net/
+        </a>
+        <p>
+          マウスやキーボードの動きを録画して繰り返せるマクロツール。<br>
+          コードを書かずに直感的に作れます。
+        </p>
+      </li>
+
+      <li>
+        <strong>その他 AIツール</strong>
+        <p>
+          Gemini や ChatGPT など。<br>
+          AutoHotkey のマクロは基本的にAIに書いてもらっています。
+        </p>
+      </li>
+    </ol>
+
+    <h2>導入手順① 多重起動編</h2>
+
+    <p>
+      Sandboxie を起動し、新規サンドボックス作成からスタンダードサンドボックスを作成します。
+    </p>
+    <img src="img/001.png" alt="">
+    <img src="img/002.png" alt="">
+
+    <p>
+      保存先はスキップ、もしくはそのままでOKです。
+    </p>
+
+    <p>「プログラムから実行」を選択</p>
+    <img src="img/003.png" alt="">
+
+    <p>こんな画面が出てきます</p>
+    <img src="img/004.png" alt="">
+
+    <p>
+      「参照」を押して Doomsday の起動用ショートカットを選択
+    </p>
+    <img src="img/005.png" alt="">
+
+    <p>OK を押します</p>
+    <img src="img/006.png" alt="">
+
+    <p>
+      管理者権限の警告が出ますが、そのままOKで。
+    </p>
+
+    <p>起動するとこんな感じ</p>
+    <img src="img/007.png" alt="">
+
+    <p>
+      IGG Account からサブ垢に切り替えます
+    </p>
+    <img src="img/008.png" alt="">
+
+    <div class="note">
+      これで初期設定は完了です！！！<br>
+      次回からはログインをスキップして多重起動できるので、とても便利です～
+    </div>
+
+    <p>
+      サブ垢追加時は、新規サンドボックスを作成して同じ手順を繰り返してください。
+    </p>
+
+    <p>
+      便利設定として「サンドボックスのオプション」も調整しておくと良いです。
+    </p>
+    <img src="img/009.png" alt="">
+
+    <h2>導入手順② 画面レイアウト編</h2>
+
+    <p>最終的にはこんな感じ</p>
+    <img src="img/010.png" alt="">
+
+    <p>
+      Window Resizer 起動時に「課金しろっ！！！」と表示が出ますが、30秒待てば無料で使えます。
+    </p>
+    <img src="img/011.png" alt="">
+
+    <p>
+ここからは自分がどんなレイアウトをしたいか、 <br>
+どんなモニターのサイズを使っているかなどによりますが、 <br>
+私はデュアルディスプレイで、横1920px 縦1080pxのモニターを使っているので、これを9分割するには？ということで、 <br>
+１個のドゥムデの大きさをWidth:600 Height:340にしました。
+    </p>
+    <img src="img/012.png" alt="">
+
+    <div class="note">
+      同時操作マクロを使う場合、<br>
+      ウィンドウサイズと配置に規則性を持たせるのが超重要です。
+    </div>
+
+    <p>
+      レイアウトが完成したらCSVを保存しておくと次回が楽です。<br>
+なんか、このソフトがポンコツなので、CSVを読み込んでも位置や大きさが若干ズレることがあります。 <br>
+そのため私は2回読み込んでます＾＾；；；
+    </p>
+
+    <h2>導入手順③ マウス同時操作編</h2>
+
+    <p>
+  マクロを書き、AutoHotKeyで実行し、ヘルプ連打・同時操作・ハイブラリー・重症兵治療ポチポチなどを自動化します。<br>
+  人によってやりたいことをコード化していく作業になります。
+</p>
+
+<p>
+  私はコードなんて書けないので、AIに要件を伝えて書いてもらいましたｗ
+</p>
+
+<p>
+  例えば、同時操作はこんな感じ<br>
+  <a href="img/マウス同期.ahk" download>マウス同期.ahk</a>
+</p>
+
+<p>
+  一番左上のドゥムデをクリックすると、対応した座標を順番にクリックしていき、<br>
+  最後に元いた位置にカーソルを戻すマクロです。
+</p>
+
+<p>
+  すなわち、キーボードの同期やマウスのドラッグなどはできませんｗ<br>
+  故に、野戦とかは無理です。すべてクリックだけで完結しなければなりません。
+</p>
+
+<p>
+  ハッキリ言ってポンコツなので改良の余地はありますが、<br>
+  すごく上手くやればゾンビ狩りとかもできる感じです。
+</p>
+
+    <p>
+      まあ、こんな感じです。<br>
+      一番知りたい部分は同時操作だと思いますが、マクロは各々の環境次第で動かないこともあったりして、
+      割と試行錯誤をする部分なんですよね。<br>
+      アイデアを出してAIに書いてもらう部分がメインになるので、頑張ってみてください。
+    </p>
+
+  </div>
+</body>
+</html>
