@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>戦争の評価値について</title>
+<style>
+  body {
+    font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", sans-serif;
+    background: #f4f6f9;
+    color: #222;
+    line-height: 1.8;
+    margin: 0;
+    padding: 30px;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: auto;
+    background: #fff;
+    padding: 40px;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 40px;
+    color: #1f3b5b;
+  }
+
+  h2 {
+    margin-top: 50px;
+    padding-left: 14px;
+    border-left: 6px solid #4a90e2;
+    color: #2a4f7a;
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    margin-top: 25px;
+    color: #333;
+  }
+
+  .formula {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    background: #eef5ff;
+    padding: 18px;
+    border-radius: 10px;
+    margin: 20px 0;
+  }
+
+  .note {
+    background: #fff6d8;
+    border-left: 5px solid #f0b400;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+  }
+
+  .important {
+    background: #ffeaea;
+    border-left: 5px solid #e74c3c;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+
+  .highlight {
+    color: #d43c3c;
+    font-weight: bold;
+  }
+
+  ol li,
+  ul li {
+    margin-bottom: 10px;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  .data-table th {
+    background: #4a90e2;
+    color: white;
+    padding: 12px;
+    text-align: left;
+  }
+
+  .data-table td {
+    border-bottom: 1px solid #ddd;
+    padding: 12px;
+  }
+
+  .data-table tr:nth-child(even) {
+    background: #f8fbff;
+  }
+
+  @media (max-width: 768px) {
+    body {
+      padding: 15px;
+    }
+
+    .container {
+      padding: 24px;
+    }
+
+    h1 {
+      font-size: 1.7rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    .formula {
+      font-size: 1.1rem;
+    }
+  }
+</style>
+
+<div class="container">
+
+  <h1>評価値について</h1>
+
+  <h2>計算式</h2>
+
+  <div class="formula">
+    戦力 ×（0.2 ～ 1.15）＝ 評価値
+  </div>
+
+  <div class="note">
+    ※ カッコ内の倍率はキル数によって変動します。
+  </div>
+
+  <p>
+    意外にも計算式はかなりシンプルでした。
+  </p>
+
+  <h3>ちなみに、以下の方法でちゃんと評価値は下がります</h3>
+
+  <ol>
+    <li>兵装を外す</li>
+    <li>チップを外す</li>
+    <li>部隊装備を外す</li>
+    <li>乗り物をすべてT1にする</li>
+  </ol>
+
+  <div class="important">
+    戦争参加者は必ず装備を外しましょう。
+  </div>
+
+  <h2>キル数について</h2>
+
+  <p>
+    一番肝心な部分ですが、まだ不明な点が多いです。
+  </p>
+
+  <h3>① 上限がありそう？</h3>
+
+  <p>
+    私は2回連続で
+    <span class="highlight">1.15倍</span>
+    でした。
+  </p>
+
+  <p>
+    他の人の結果を見ても、
+    <span class="highlight">上限は1.15</span>
+    の可能性が高そうです。
+  </p>
+
+  <h3>② 前回の戦争結果を反映していそう？</h3>
+
+  <p>
+    積極的に戦闘を行ったサブアカウントは、
+    <span class="highlight">0.50 → 0.88</span>
+    まで倍率が上昇しました。
+  </p>
+
+  <h3>③ キル数がそのまま反映されるわけではなさそう？</h3>
+
+  <p>
+    ある程度、階級のように段階的に分かれているような気がします。<br>
+    （複数のアカウントが同じ倍率になっている為）<br>
+    <br>
+    また、少ない戦力のアカウントほど、少ないキル数で評価値が伸びやすいような気もします
+  </p>
+
+  <h2>参考データ</h2>
+
+  <table class="data-table">
+    <tr>
+      <th>キャラクター</th>
+      <th>倍率</th>
+      <th>備考</th>
+    </tr>
+
+    <tr>
+      <td>メイン垢</td>
+      <td>115%（前回＋0％）</td>
+      <td>-</td>
+    </tr>
+
+    <tr>
+      <td>巨大なカニ</td>
+      <td>88%（前回+18%）</td>
+      <td>約4,000万pt</td>
+    </tr>
+
+    <tr>
+      <td>ごーかん</td>
+      <td>88%（前回+38%）</td>
+      <td>深夜帯の夜襲対応で補充</td>
+    </tr>
+
+    <tr>
+      <td>突撃じゃあ</td>
+      <td>88%（前回+38%）</td>
+      <td>同じく補充</td>
+    </tr>
+
+    <tr>
+      <td>物資ヤドカリ</td>
+      <td>82%</td>
+      <td>補充</td>
+    </tr>
+
+    <tr>
+      <td>援助のタコ</td>
+      <td>82%</td>
+      <td>補充</td>
+    </tr>
+
+    <tr>
+      <td>美味しいエビ</td>
+      <td>76%</td>
+      <td>補充</td>
+    </tr>
+
+    <tr>
+      <td>ビタミン盾</td>
+      <td>40%</td>
+      <td>戦争未エントリー</td>
+    </tr>
+
+    <tr>
+      <td>お疲れカルビ</td>
+      <td>40%</td>
+      <td>戦争未エントリー</td>
+    </tr>
+
+  </table>
+  <p><img src="/img/20260622_1.png"></p>
+</div>
+
+
+</body>
+</html>
