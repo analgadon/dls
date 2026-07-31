@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>戦争について</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --bg:#f4f6f9;
+    --panel:#ffffff;
+    --line:#e3e9f0;
+    --ink:#222;
+    --sub:#6b7785;
+    --blue:#4a90e2;
+    --blue-dark:#1f3b5b;
+    --blue-mid:#2a4f7a;
+    --blue-bg:#eef5ff;
+    --yellow:#f0b400;
+    --yellow-bg:#fff6d8;
+    --red:#e74c3c;
+    --red-bg:#ffeaea;
+    --green:#2fa360;
+    --green-bg:#eafaf1;
+    --radius:14px;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Yu Gothic","Hiragino Kaku Gothic ProN",sans-serif;
+    line-height:1.8;
+    padding:30px 15px;
+  }
+
+  .container{
+    max-width:960px;
+    margin:0 auto;
+    background:var(--panel);
+    padding:40px;
+    border-radius:var(--radius);
+    box-shadow:0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  h1{
+    text-align:center;
+    font-size:2.1rem;
+    margin:0 0 10px;
+    color:var(--blue-dark);
+  }
+  .lede{
+    text-align:center;
+    color:var(--sub);
+    font-size:0.95rem;
+    margin:0 0 40px;
+  }
+
+  .report{
+    margin-top:50px;
+  }
+  .report h2{
+    margin:0 0 16px;
+    padding-left:14px;
+    border-left:6px solid var(--blue);
+    color:var(--blue-mid);
+    font-size:1.4rem;
+  }
+  .report p{
+    margin:0 0 10px;
+    color:#333;
+  }
+
+  .intro-note{
+    margin-top:40px;
+    background:var(--yellow-bg);
+    border-left:5px solid var(--yellow);
+    padding:18px 20px;
+    border-radius:8px;
+    font-size:0.95rem;
+  }
+  .intro-note strong{ color:var(--blue-dark); }
+
+  hr.divider{
+    border:0;
+    border-top:1px solid var(--line);
+    margin:40px 0 26px;
+  }
+
+  /* ---------- Vote cards ---------- */
+  .vote-card{
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:24px 24px 20px;
+    margin:0 0 22px;
+    box-shadow:0 2px 8px rgba(31,59,91,0.05);
+  }
+  .vote-card .index{
+    position:absolute;
+    top:-12px;
+    left:20px;
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:.05em;
+    color:#fff;
+    background:var(--blue);
+    padding:4px 10px;
+    border-radius:20px;
+  }
+  .vote-card h3{
+    font-size:1.08rem;
+    line-height:1.6;
+    margin:12px 0 18px;
+    color:var(--ink);
+  }
+
+  /* Emoji reaction row */
+  .reactions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .react-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:inherit;
+    font-size:14px;
+    color:var(--sub);
+    background:#f6f9fc;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:8px 14px 8px 12px;
+    cursor:pointer;
+    transition:transform .12s ease, border-color .15s ease, background .15s ease, color .15s ease;
+  }
+  .react-btn .emoji{
+    font-size:18px;
+    line-height:1;
+    filter:grayscale(55%);
+    transition:filter .15s ease, transform .15s ease;
+  }
+  .react-btn .count{
+    font-weight:bold;
+    font-size:13px;
+    color:var(--sub);
+    min-width:1.2em;
+    text-align:right;
+  }
+  .react-btn:hover{
+    border-color:#c7d5e6;
+    transform:translateY(-1px);
+  }
+  .react-btn:focus-visible{
+    outline:2px solid var(--blue);
+    outline-offset:2px;
+  }
+  .react-btn.selected{
+    color:var(--ink);
+    font-weight:bold;
+  }
+  .react-btn.selected .emoji{
+    filter:grayscale(0%);
+    transform:scale(1.12);
+  }
+  .react-btn[data-type="agree"].selected{ background:var(--green-bg); border-color:var(--green); }
+  .react-btn[data-type="agree"].selected .count{ color:var(--green); }
+  .react-btn[data-type="hmm"].selected{ background:var(--yellow-bg); border-color:var(--yellow); }
+  .react-btn[data-type="hmm"].selected .count{ color:#b98600; }
+  .react-btn[data-type="disagree"].selected{ background:var(--red-bg); border-color:var(--red); }
+  .react-btn[data-type="disagree"].selected .count{ color:var(--red); }
+
+  /* Collapsible opinion */
+  .opinion-toggle{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-top:16px;
+    background:none;
+    border:0;
+    padding:0;
+    color:var(--blue);
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:bold;
+    cursor:pointer;
+  }
+  .opinion-toggle .chev{
+    display:inline-block;
+    transition:transform .2s ease;
+    font-size:11px;
+  }
+  .opinion-toggle[aria-expanded="true"] .chev{
+    transform:rotate(90deg);
+  }
+  .opinion-toggle:focus-visible{
+    outline:2px solid var(--blue);
+    outline-offset:3px;
+    border-radius:3px;
+  }
+
+  .opinion-panel{
+    display:grid;
+    grid-template-rows:0fr;
+    opacity:0;
+    transition:grid-template-rows .28s ease, opacity .22s ease, margin-top .28s ease;
+    margin-top:0;
+  }
+  .opinion-panel.open{
+    grid-template-rows:1fr;
+    opacity:1;
+    margin-top:14px;
+  }
+  .opinion-panel > div{
+    overflow:hidden;
+  }
+  .opinion-inner{
+    border-top:1px solid var(--line);
+    padding-top:14px;
+    font-size:14.5px;
+    color:#333;
+  }
+  .opinion-inner .verdict{
+    display:inline-block;
+    font-size:12px;
+    font-weight:bold;
+    padding:4px 10px;
+    border-radius:6px;
+    margin-bottom:10px;
+  }
+  .verdict.agree{ color:var(--green); background:var(--green-bg); }
+  .verdict.hmm{ color:#b98600; background:var(--yellow-bg); }
+  .verdict.disagree{ color:var(--red); background:var(--red-bg); }
+
+  .opinion-inner p{ margin:0 0 12px; }
+  .opinion-inner ol{ margin:0 0 14px; padding-left:1.3em; }
+  .opinion-inner li{ margin-bottom:6px; }
+
+  footer.note{
+    text-align:center;
+    color:var(--sub);
+    font-size:12px;
+    margin-top:36px;
+  }
+
+  @media (max-width: 768px){
+    body{ padding:0; background:#fff; }
+    .container{
+      max-width:100%;
+      padding:24px 18px;
+      border-radius:0;
+      box-shadow:none;
+      background:#fff;
+    }
+    .vote-card{ box-shadow:none; }
+    h1{ font-size:1.6rem; }
+    .report h2{ font-size:1.15rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .react-btn, .opinion-panel, .opinion-toggle .chev, .react-btn .emoji{
+      transition:none !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>昨今、マッチングが厳しすぎる件について</h1>
+
+  <section class="report">
+    <h2>今、何が起きているのか</h2>
+    <p><strong>5月末のアップデート以降、致命的にマッチングのシステムが変わってしまいました。</strong></p>
+    <p>最近、やたら強い敵とマッチングしたり、マップ全体が戦闘同盟ばかりになったりすることが増えましたがまさにこれが原因であり、今一度 周知も兼ねて投稿させていただきます。</p>
+  </section>
+
+  <section class="report">
+    <h2>何が変わったのか</h2>
+    <p>大きな変更点として、<strong>従来の方式が廃止され、キル数によって個々の評価値が変動する仕様</strong>に変更されました。</p>
+    <p>この変更以前は、マッチングの仕組みをあまり理解しないまま、メンバー全員をエントリーさせてエリート帯に参加していた同盟が多く存在していました。</p>
+    <p>しかし、アップデート後はキル数が重視されるようになったため、いわゆる<strong>「農民同盟」</strong>がエリートウォーゾーンに参加することは事実上不可能になりました。</p>
+  </section>
+
+  <section class="report">
+    <h2>その結果</h2>
+    <p>エリート帯は戦闘に特化した同盟同士で集中しやすくなり、結果として以前よりも厳しいマッチングが増えていると感じます。
+      実際のところ、yekuではアップデート以降、非常に厳しいマッチングが続いており<strong>戦績は1勝5敗</strong>となっています。
+    </p>
+  </section>
+
+  <div class="intro-note">
+    ここからは、どうすればマッチングを緩和できるのか、私なりの考えを書いていきます。<br>
+    かくいう私自身もまだ模索中なので、<strong>「同意する」「うーむ」「同意しない」</strong>のリアクションを用意してみましたｗ<br>
+    よかったら投票してください！
+  </div>
+
+  <hr class="divider">
+
+  <!-- 議題1 -->
+  <div class="vote-card">
+    <span class="index">説 01</span>
+    <h3>キル数がマッチングに悪影響を与えるため、農民化した方がいい説</h3>
+
+    <div class="reactions">
+      <button class="react-btn" data-type="agree" id="topic-1-agree" onclick="vote('topic-1', 'agree')">
+        <span class="emoji">👍</span>同意<span class="count" id="count-topic-1-agree">0</span>
+      </button>
+      <button class="react-btn" data-type="hmm" id="topic-1-hmm" onclick="vote('topic-1', 'hmm')">
+        <span class="emoji">🤔</span>うーむ<span class="count" id="count-topic-1-hmm">0</span>
+      </button>
+      <button class="react-btn" data-type="disagree" id="topic-1-disagree" onclick="vote('topic-1', 'disagree')">
+        <span class="emoji">👎</span>同意しない<span class="count" id="count-topic-1-disagree">0</span>
+      </button>
+    </div>
+
+    <button class="opinion-toggle" aria-expanded="false" onclick="toggleOpinion(this)">
+      <span class="chev">▶</span>盾持ちの意見を見る
+    </button>
+    <div class="opinion-panel"><div><div class="opinion-inner">
+      <span class="verdict disagree">私の意見：同意しない</span>
+      <p>キル数はあまり意識しなくていいと思っています。「エイペックス」「エリート」「フィアレス」の振り分けにはキル数の影響がはっきり出ていますが、振り分けられた後は装備や兵士数などの評価値をもとにマッチングしている気がします。</p>
+      <ol>
+        <li>無駄な兵士数を減らす（車両をT1にする、余分な兵士を死亡・解散させる）</li>
+        <li>使わないヒーローに無駄な兵装をつけたり育成したりしない</li>
+        <li>使わない兵科のパーツや部隊装備は伸ばさない</li>
+      </ol>
+      <p>——などなど、あらゆる面で「最高戦力」を更新しないことが重要です。私たちが本当に見直すべきは、こうした評価値の調整だと思います。</p>
+      <p>自分の戦力って過剰なの？！ って思った方は、<b>アリーナ評価値</b>を参考にしてみてください。</p>
+      <p><img src="img/20260731_1.png" alt="アリーナ戦力"><p>
+      <p>栄光のアリーナに行き、この赤い部分の数値がアリーナ評価値です。<br>
+      目安として<strong>アリーナ評価値の3倍～3.3倍程度が適正戦力</strong>です。<br>
+      私であれば7894万なので、戦力は2.3億～2.5億程度が理想的な体重です。</p>
+      <p>「アリーナが5000万なのに戦力が2億ある」という方はおそらく兵士が多すぎるか、無駄に戦力を底上げしている可能性が高いので、<strong>ダイエットしましょう</strong><p>
+    </div></div></div>
+  </div>
+
+  <!-- 議題2 -->
+  <div class="vote-card">
+    <span class="index">説 02</span>
+    <h3>兵装・チップ外しは意味がない説</h3>
+
+    <div class="reactions">
+      <button class="react-btn" data-type="agree" id="topic-2-agree" onclick="vote('topic-2', 'agree')">
+        <span class="emoji">👍</span>同意<span class="count" id="count-topic-2-agree">0</span>
+      </button>
+      <button class="react-btn" data-type="hmm" id="topic-2-hmm" onclick="vote('topic-2', 'hmm')">
+        <span class="emoji">🤔</span>うーむ<span class="count" id="count-topic-2-hmm">0</span>
+      </button>
+      <button class="react-btn" data-type="disagree" id="topic-2-disagree" onclick="vote('topic-2', 'disagree')">
+        <span class="emoji">👎</span>同意しない<span class="count" id="count-topic-2-disagree">0</span>
+      </button>
+    </div>
+
+    <button class="opinion-toggle" aria-expanded="false" onclick="toggleOpinion(this)">
+      <span class="chev">▶</span>盾持ちの意見を見る
+    </button>
+    <div class="opinion-panel"><div><div class="opinion-inner">
+      <span class="verdict hmm">私の意見：うーむ</span>
+      <p>理由は、モードによってマッチングの傾向が明らかに違うからです。ポンペイでは、兵装を外した方が良いマッチングになることが多いです。反対に、諸島レイドや極限対決では、兵装を外すかどうかに関係なく理不尽に相手が強い傾向があります。アイランドは、きついマッチと無双マッチの両極端で、もはや適当にマッチしている印象です。</p>
+      <p>とはいえ、同盟として「外す」と決めたのにノータッチのメンバーもちらほら見かけます。意味があるかどうかは別として、やると決めたら全員で協力すべきだと思います。</p>
+      <p>また、<strong>リセット直前に兵装を解除する方もいますが、それはやめてください。</strong><br>
+        理由は諸島レイドなどでエリートウォーゾーンを狙う場合、500位付近になるようにリーダーが毎回8時頃から調整をしていてくれますが、<strong>直前に兵装を外されてしまうと事故って500位以下に落ちてしまい、フィアレスでマッチングしてしまう危険性があるため</strong>です。<br>
+      マッチング作業は大変なので、私は前日の夜には解除をするように心がけてます。
+      </p>
+    </div></div></div>
+  </div>
+
+  <!-- 議題3 -->
+  <div class="vote-card">
+    <span class="index">説 03</span>
+    <h3>「登録」を押した瞬間に兵装などを参照して評価値が決定される説</h3>
+
+    <div class="reactions">
+      <button class="react-btn" data-type="agree" id="topic-3-agree" onclick="vote('topic-3', 'agree')">
+        <span class="emoji">👍</span>同意<span class="count" id="count-topic-3-agree">0</span>
+      </button>
+      <button class="react-btn" data-type="hmm" id="topic-3-hmm" onclick="vote('topic-3', 'hmm')">
+        <span class="emoji">🤔</span>うーむ<span class="count" id="count-topic-3-hmm">0</span>
+      </button>
+      <button class="react-btn" data-type="disagree" id="topic-3-disagree" onclick="vote('topic-3', 'disagree')">
+        <span class="emoji">👎</span>同意しない<span class="count" id="count-topic-3-disagree">0</span>
+      </button>
+    </div>
+
+    <button class="opinion-toggle" aria-expanded="false" onclick="toggleOpinion(this)">
+      <span class="chev">▶</span>盾持ちの意見を見る
+    </button>
+    <div class="opinion-panel"><div><div class="opinion-inner">
+      <span class="verdict hmm">私の意見：うーむ</span>
+      <p>ここからはだんだんオカルトっぽくなってきますが、ありえそうなのでアンケート取ってみますｗ</p>
+      <p>これが本当だとしたら、下に降り放題なので無いと思いたいですが今まで試したことがないので「うーむ」でｗ</p>
+    </div></div></div>
+  </div>
+
+  <!-- 議題4 -->
+  <div class="vote-card">
+    <span class="index">説 04</span>
+    <h3>戦争にエントリーしていないサブアカや休眠アカウントまでもが査定されている説</h3>
+
+    <div class="reactions">
+      <button class="react-btn" data-type="agree" id="topic-4-agree" onclick="vote('topic-4', 'agree')">
+        <span class="emoji">👍</span>同意<span class="count" id="count-topic-4-agree">0</span>
+      </button>
+      <button class="react-btn" data-type="hmm" id="topic-4-hmm" onclick="vote('topic-4', 'hmm')">
+        <span class="emoji">🤔</span>うーむ<span class="count" id="count-topic-4-hmm">0</span>
+      </button>
+      <button class="react-btn" data-type="disagree" id="topic-4-disagree" onclick="vote('topic-4', 'disagree')">
+        <span class="emoji">👎</span>同意しない<span class="count" id="count-topic-4-disagree">0</span>
+      </button>
+    </div>
+
+    <button class="opinion-toggle" aria-expanded="false" onclick="toggleOpinion(this)">
+      <span class="chev">▶</span>盾持ちの意見を見る
+    </button>
+    <div class="opinion-panel"><div><div class="opinion-inner">
+      <span class="verdict agree">私の意見：同意</span>
+      <p>そんなことはないと信じたいですが、実はあるんじゃないかと思っています（笑）期待も込めて。</p>
+    </div></div></div>
+  </div>
+
+    <!-- 議題5 -->
+  <div class="vote-card">
+    <span class="index">説 05</span>
+    <h3>エントリーしたアカウントの平均値でマッチングされる説</h3>
+
+    <div class="reactions">
+      <button class="react-btn" data-type="agree" id="topic-5-agree" onclick="vote('topic-5', 'agree')">
+        <span class="emoji">👍</span>同意<span class="count" id="count-topic-5-agree">0</span>
+      </button>
+      <button class="react-btn" data-type="hmm" id="topic-5-hmm" onclick="vote('topic-5', 'hmm')">
+        <span class="emoji">🤔</span>うーむ<span class="count" id="count-topic-5-hmm">0</span>
+      </button>
+      <button class="react-btn" data-type="disagree" id="topic-5-disagree" onclick="vote('topic-5', 'disagree')">
+        <span class="emoji">👎</span>同意しない<span class="count" id="count-topic-5-disagree">0</span>
+      </button>
+    </div>
+
+    <button class="opinion-toggle" aria-expanded="false" onclick="toggleOpinion(this)">
+      <span class="chev">▶</span>盾持ちの意見を見る
+    </button>
+    <div class="opinion-panel"><div><div class="opinion-inner">
+      <span class="verdict hmm">私の意見：うーむ</span>
+      <p>戦争はアクティブ人数が50人からエントリーが可能ですが、サブアカウントなどを詰め込み平均を下げることでマッチングがゆるくなるというもの。</p>
+      <p>私は無い寄りですが、長いことマッチングの調整をやってきたリーダーの肌感覚である気がするということなので、ありそうな気もする</p>
+    </div></div></div>
+  </div>
+
+
+  <footer class="note">以上、どうでしょう？</footer>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://kkwpsupoycwzmkcypmii.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_GkrHuUFp0vbtI3Hpb2D0pw_3ZkW1wuB';
+
+  const { createClient } = supabase;
+  const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: false }
+  });
+
+  const topics = ['topic-1', 'topic-2', 'topic-3', 'topic-4'];
+
+  window.addEventListener('DOMContentLoaded', () => {
+      fetchCounts();
+      restoreUI();
+  });
+
+  function restoreUI() {
+      topics.forEach(topicId => {
+          const votedType = localStorage.getItem(`my_vote_${topicId}`);
+          if (votedType) {
+              const btn = document.getElementById(`${topicId}-${votedType}`);
+              if (btn) btn.classList.add('selected');
+          }
+      });
+  }
+
+  function toggleOpinion(btn) {
+      const panel = btn.nextElementSibling;
+      const isOpen = panel.classList.toggle('open');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      btn.lastChild.textContent = isOpen ? '意見を閉じる' : '私の意見を見る';
+  }
+
+  async function fetchCounts() {
+      const { data, error } = await _supabase.from('reactions').select('*');
+      if (error) return;
+      data.forEach(row => {
+          const span = document.getElementById(`count-${row.topic_id}-${row.id}`);
+          if (span) span.textContent = row.count;
+      });
+  }
+
+  async function vote(topicId, newType) {
+      const storageKey = `my_vote_${topicId}`;
+      const oldType = localStorage.getItem(storageKey);
+
+      if (oldType === newType) return;
+
+      if (oldType) {
+          const { data: oldData } = await _supabase
+              .from('reactions')
+              .select('count')
+              .eq('topic_id', topicId)
+              .eq('id', oldType)
+              .single();
+
+          if (oldData) {
+              await _supabase
+                  .from('reactions')
+                  .update({ count: Math.max(0, oldData.count - 1) })
+                  .eq('topic_id', topicId)
+                  .eq('id', oldType);
+          }
+
+          const oldBtn = document.getElementById(`${topicId}-${oldType}`);
+          if (oldBtn) oldBtn.classList.remove('selected');
+      }
+
+      const { data: newData } = await _supabase
+          .from('reactions')
+          .select('count')
+          .eq('topic_id', topicId)
+          .eq('id', newType)
+          .single();
+
+      if (newData) {
+          await _supabase
+              .from('reactions')
+              .update({ count: newData.count + 1 })
+              .eq('topic_id', topicId)
+              .eq('id', newType);
+      }
+
+      localStorage.setItem(storageKey, newType);
+      const newBtn = document.getElementById(`${topicId}-${newType}`);
+      if (newBtn) newBtn.classList.add('selected');
+  }
+
+  _supabase
+      .channel('room-reactions')
+      .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'reactions' },
+          payload => {
+              const updated = payload.new;
+              if (updated && updated.topic_id) {
+                  const span = document.getElementById(`count-${updated.topic_id}-${updated.id}`);
+                  if (span) span.textContent = updated.count;
+              }
+          }
+      )
+      .subscribe();
+</script>
+</body>
+</html>
